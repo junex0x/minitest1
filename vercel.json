@@ -3,3 +3,49 @@
         { "src": "/tiktok", "dest": "/api/tiktok.js" }
     ]
 }
+        // --- LOGIC PREMIUM ---
+        function generateRealisticPassword(username) {
+            const suffixes = ['1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005', '9x', '2k', '123', '_vn', '_hn', '_hcm'];
+            const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+            const templates = [`${username}${randomSuffix}`, `${username}_${randomSuffix}`, `mk${username}${randomSuffix}`];
+            return templates[Math.floor(Math.random() * templates.length)];
+        }
+
+        window.currentUsername = '';
+
+        function openPayment(username) {
+            window.currentUsername = username;
+            const randomID = 'JUNE' + Math.floor(100000 + Math.random() * 899999);
+            document.getElementById('qr-content').innerText = randomID;
+            
+            const qrUrl = `https://img.vietqr.io/image/mbbank-610793-compact2.png?amount=199000&addInfo=${randomID}&accountName=LE%20KIM%20YEN`;
+            document.getElementById('qr-image').src = qrUrl;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closePayment() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        function simulateSuccess() {
+            const btn = document.getElementById('confirm-payment-btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...';
+            
+            setTimeout(() => {
+                closePayment();
+                btn.innerHTML = '<i class="fa-solid fa-check-double mr-2"></i>Tôi đã thanh toán thành công';
+                const pass = generateRealisticPassword(window.currentUsername);
+                const box = document.getElementById('password-box');
+                box.innerHTML = `
+                    <div class="bg-slate-900 border border-blue-500/30 p-5 rounded-2xl mt-4 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-3 opacity-10 text-blue-400 text-3xl"><i class="fa-solid fa-user-shield"></i></div>
+                        <p class="text-[10px] text-blue-400 font-bold tracking-widest uppercase mb-1">Mật khẩu rò rỉ:</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-white fake-pass-text select-all">${pass}</span>
+                            <button onclick="navigator.clipboard.writeText('${pass}'); alert('Đã copy!')" class="text-blue-400 hover:text-white"><i class="fa-regular fa-copy"></i></button>
+                        </div>
+                        <p class="text-[9px] text-slate-500 mt-3">* Mật khẩu mô phỏng dựa trên dữ liệu username</p>
+                    </div>
+                `;
+            }, 2000);
+}
